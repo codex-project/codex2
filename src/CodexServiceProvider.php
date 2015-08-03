@@ -11,7 +11,7 @@ use Caffeinated\Beverage\ServiceProvider;
 use Codex\Codex\Filters\FrontMatterFilter;
 use Codex\Codex\Filters\ParsedownFilter;
 use Codex\Codex\Hooks\Github\GithubHookServiceProvider;
-use Codex\Codex\Hooks\Github\GithubServiceProvider;
+use Codex\Codex\Hooks\Filesystems\FilesystemsHookServiceProvider;
 use Codex\Codex\Traits\CodexHookProvider;
 
 /**
@@ -45,6 +45,7 @@ class CodexServiceProvider extends ServiceProvider
 
         $this->registerFilters();
         $this->registerGithub();
+        $this->registerFilesystems();
     }
 
     protected function registerFilters()
@@ -56,5 +57,10 @@ class CodexServiceProvider extends ServiceProvider
     protected function registerGithub()
     {
         $this->app->register(GithubHookServiceProvider::class);
+    }
+
+    protected function registerFilesystems()
+    {
+        $this->app->register(FilesystemsHookServiceProvider::class);
     }
 }

@@ -4,7 +4,7 @@
  *
  * MIT License and copyright information bundled with this package in the LICENSE file
  */
-namespace Codex\Codex\Hooks\Storage;
+namespace Codex\Codex\Hooks\Filesystems;
 
 use Codex\Codex\Factory;
 use Codex\Codex\Hook;
