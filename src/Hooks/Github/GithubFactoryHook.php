@@ -40,7 +40,7 @@ class GithubFactoryHook implements Hook
     {
         // Add the github hook specific config to the codex config. It will add some default_project_config stuff
         $config = $this->files->getRequire(__DIR__ . '/config.php');
-        $codex->setConfig(array_merge_recursive($codex->config(), $config));
+        $codex->setConfig(array_replace_recursive($codex->config(), $config));
     }
 
 }

@@ -106,8 +106,8 @@ class Project
         $this->refs     = [ ];
         $this->versions = array_filter(array_map(function ($dirPath) use ($path, &$branches)
         {
-            $version      = (string)Str::create($dirPath)->removeLeft($path)->removeLeft(DIRECTORY_SEPARATOR);
-            $this->refs[] = $version;
+            $version      = Str::create(Str::ensureLeft($dirPath, '/'))->removeLeft($path)->removeLeft(DIRECTORY_SEPARATOR);
+            $this->refs[] = (string)$version;
             try
             {
                 return new version($version);
@@ -209,7 +209,7 @@ class Project
 
         $path = Path::join($this->path, $this->ref, $path . '.md');
 
-        $document = new Document($this, $this->files, $path);
+        $document = new Document($this->factory, $this, $this->files, $path);
         Factory::run('project:document', [$document]);
         return $document;
     }

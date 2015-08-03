@@ -6,6 +6,7 @@
  */
 namespace Codex\Codex\Hooks\Github;
 
+use Codex\Codex\Hooks\Github\Console\CodexSyncGithubCommand;
 use Codex\Codex\Traits\CodexHookProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -42,5 +43,6 @@ class GithubHookServiceProvider extends ServiceProvider
         // And add the hook providing the  `github` method for projects to retreive a gitsync instance for that specific project
         $this->addCodexHook('project:ready', GithubProjectHook::class);
 
+        $this->commands(CodexSyncGithubCommand::class);
     }
 }

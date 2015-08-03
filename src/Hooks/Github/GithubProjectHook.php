@@ -10,7 +10,7 @@ use Codex\Codex\Hook;
 use Codex\Codex\Project;
 use Github\Client;
 use Illuminate\Contracts\Cache\Repository as Cache;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Filesystem;
 
 /**
  * This is the Hook.
@@ -23,11 +23,11 @@ use Illuminate\Filesystem\Filesystem;
 class GithubProjectHook implements Hook
 {
 
-    protected $files;
+    public $files;
 
-    protected $github;
+    public $github;
 
-    protected $cache;
+    public $cache;
 
     public function __construct(Filesystem $files, Client $github, Cache $cache)
     {

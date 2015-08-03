@@ -8,7 +8,7 @@ namespace Codex\Codex;
 
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Traits\Macroable;
 use Symfony\Component\Finder\Finder;
 
@@ -80,8 +80,8 @@ class Factory
         foreach ( $found as $file )
         {
             $name                    = last(explode(DIRECTORY_SEPARATOR, $file->getPath()));
-            $config                  = $this->files->getRequire($file->getRealPath());
-            $this->projects[ $name ] = array_merge_recursive($this->config('default_project_config'), $config);
+            $config                  = with(new \Illuminate\Filesystem\Filesystem)->getRequire($file->getRealPath());
+            $this->projects[ $name ] = array_replace_recursive($this->config('default_project_config'), $config);
         }
     }
 

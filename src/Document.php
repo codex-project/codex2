@@ -46,20 +46,22 @@ class Document
      */
     protected $attributes;
 
+    protected $factory;
 
     /**
-     * @param \Codex\Codex\Project              $project
-     * @param \Illuminate\Filesystem\Filesystem $files
-     * @param                                   $path
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @param \Codex\Codex\Factory                                                          $factory
+     * @param \Codex\Codex\Project                                                          $project
+     * @param \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\Filesystem $files
+     * @param                                                                               $path
      */
-    public function __construct(Project $project, Filesystem $files, $path)
+    public function __construct(Factory $factory, Project $project, Filesystem $files, $path)
     {
-        $this->project = $project;
-        $this->files   = $files;
-        $this->path    = $path;
-        $this->content        = $this->files->get($this->path);
-        Factory::run('document:ready', [$this]);
+        $this->project    = $project;
+        $this->files      = $files;
+        $this->path       = $path;
+        $this->attributes = $factory->config('default_document_attributes');
+        $this->content    = $this->files->get($this->path);
+        Factory::run('document:ready', [ $this ]);
     }
 
     /**
@@ -69,7 +71,8 @@ class Document
      */
     public function render()
     {
-        Factory::run('document:render', [$this]);
+        Factory::run('document:render', [ $this ]);
+
         return $this->content;
     }
 
@@ -79,7 +82,7 @@ class Document
      * @param $key
      * @return array
      */
-    public function attr($key=null)
+    public function attr($key = null)
     {
 
         return is_null($key) ? $this->attributes : array_get($this->attributes, $key);
@@ -173,8 +176,6 @@ class Document
 
         return $this;
     }
-
-
 
 
 }

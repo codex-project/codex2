@@ -16,14 +16,16 @@ class FrontMatterFilter implements Hook
     public function handle(Document $document)
     {
         $content = $document->getContent();
-        $regex = '~^(' . implode('|', array_map('preg_quote', [ '---' ]))
-            . "){1}[\r\n|\n]*(.*?)[\r\n|\n]+("
-            . implode('|', array_map('preg_quote', [ '---' ]))
-            . "){1}[\r\n|\n]*(.*)$~s";
-        if ( preg_match($regex, $content, $matches) === 1 )
+
+        $pattern = '/<!---([\w\W]*?)-->/';
+        if ( preg_match($pattern, $content, $matches) === 1 )
         {
-            $content[ 'frontmatter' ] = Yaml::parse($matches[ 2 ]);
-            $content[ 'body' ]        = $matches[ 4 ];
+            $content = preg_replace($pattern, '', $content); // not really required when using html doc tags. But in case it's frontmatter, it should be removed
+            $attributes = array_merge_recursive($document->getAttributes(), Yaml::parse($matches[1]));
+            $document->setAttributes($attributes);
+
+           # $content[ 'frontmatter' ] = Yaml::parse($matches[ 2 ]);
+           # $content[ 'body' ]        = $matches[ 4 ];
         }
 
         $document->setContent($content);
