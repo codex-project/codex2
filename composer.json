@@ -1,0 +1,21 @@
+{
+    "name": "codex/codex",
+    "description": "",
+    "authors": [
+        {
+            "name": "Robin Radic",
+            "email": "robin@radic.nl",
+            "homepage": "https://github.com/robinradic"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "illuminate/support": "~5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codex\\Codex\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
