@@ -6,7 +6,8 @@
  */
 namespace Codex\Codex;
 
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Traits\Macroable;
 
 /**
  * This is the Document.
@@ -18,6 +19,7 @@ use Illuminate\Filesystem\Filesystem;
  */
 class Document
 {
+    use Macroable;
 
     /**
      * @var \Codex\Codex\Project
@@ -57,6 +59,7 @@ class Document
         $this->files   = $files;
         $this->path    = $path;
         $this->content        = $this->files->get($this->path);
+        Factory::run('document:ready', [$this]);
     }
 
     /**
@@ -157,6 +160,20 @@ class Document
     {
         return $this->files;
     }
+
+    /**
+     * Set the files value
+     *
+     * @param Filesystem $files
+     * @return Document
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
 
 
 

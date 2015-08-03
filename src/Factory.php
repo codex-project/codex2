@@ -53,12 +53,14 @@ class Factory
         $this->files   = $files;
         $this->config  = $config->get('codex');
 
+        static::run('factory:ready', [ $this ]);
+
+
         if ( ! isset($this->projects) )
         {
             $this->findAll();
         }
 
-        static::run('factory:ready', [ $this ]);
     }
 
     /**
@@ -158,6 +160,29 @@ class Factory
     public function setConfig(array $config)
     {
         $this->config = $config;
+    }
+
+    /**
+     * get files value
+     *
+     * @return mixed
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Set the files value
+     *
+     * @param mixed $files
+     * @return Factory
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+
+        return $this;
     }
 
 

@@ -8,7 +8,8 @@ namespace Codex\Codex;
 
 use Caffeinated\Beverage\Path;
 use Caffeinated\Beverage\Str;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Traits\Macroable;
 use vierbergenlars\SemVer\version;
 
 /**
@@ -21,6 +22,8 @@ use vierbergenlars\SemVer\version;
  */
 class Project
 {
+    use Macroable;
+
     const SHOW_MASTER_BRANCH = 0;
     const SHOW_LAST_VERSION = 1;
     const SHOW_LAST_VERSION_OTHERWISE_MASTER_BRANCH = 2;
@@ -146,6 +149,8 @@ class Project
                 break;
         }
         $this->ref = $this->defaultRef = (string)$defaultRef;
+
+        Factory::run('project:ready', [$this]);
     }
 
     /**
@@ -258,5 +263,30 @@ class Project
 
         return array_merge($this->branches, $versions);
     }
+
+    /**
+     * get files value
+     *
+     * @return Filesystem
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Set the files value
+     *
+     * @param Filesystem $files
+     * @return Project
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
+
 
 }

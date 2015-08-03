@@ -10,6 +10,8 @@ namespace Codex\Codex;
 use Caffeinated\Beverage\ServiceProvider;
 use Codex\Codex\Filters\FrontMatterFilter;
 use Codex\Codex\Filters\ParsedownFilter;
+use Codex\Codex\Hooks\Github\GithubHookServiceProvider;
+use Codex\Codex\Hooks\Github\GithubServiceProvider;
 use Codex\Codex\Traits\CodexHookProvider;
 
 /**
@@ -31,7 +33,6 @@ class CodexServiceProvider extends ServiceProvider
         $app = parent::boot();
         /** @var Factory $factory */
         $factory = $this->app->make('codex');
-        Factory::run('post:boot', [ $factory ]);
     }
 
     /**
@@ -41,15 +42,19 @@ class CodexServiceProvider extends ServiceProvider
     {
         $app = parent::register();
         $this->app->singleton('codex', 'Codex\Codex\Factory');
-        $factory = $this->app->make('codex');
-        Factory::run('post:register', [ $factory ]);
 
         $this->registerFilters();
+        $this->registerGithub();
     }
 
     protected function registerFilters()
     {
         $this->addCodexHook('document:render', FrontMatterFilter::class);
         $this->addCodexHook('document:render', ParsedownFilter::class);
+    }
+
+    protected function registerGithub()
+    {
+        $this->app->register(GithubHookServiceProvider::class);
     }
 }
