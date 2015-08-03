@@ -29,6 +29,9 @@ class GithubHookServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Register the routes for the webhook
+        require_once(__DIR__.'/Http/routes.php');
+
         // Register and configure github connection
         $this->app->register(\GrahamCampbell\GitHub\GitHubServiceProvider::class);
 
@@ -43,6 +46,7 @@ class GithubHookServiceProvider extends ServiceProvider
         // And add the hook providing the  `github` method for projects to retreive a gitsync instance for that specific project
         $this->addCodexHook('project:ready', GithubProjectHook::class);
 
+        // And register the sync command for console
         $this->commands(CodexSyncGithubCommand::class);
     }
 }

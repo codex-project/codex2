@@ -49,7 +49,7 @@ class CodexSyncGithubCommand extends Command
         {
             $githubProjects = [ ];
             $choices        = [ ];
-            foreach ( $this->factory->getProjects() as $name => $config )
+            foreach ( $this->factory->all() as $name => $config )
             {
                 if ( $config[ 'use_github' ] )
                 {

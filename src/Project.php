@@ -84,7 +84,6 @@ class Project
      */
     protected $versions;
 
-
     /** Instantiates the class
      *
      * @param \Codex\Codex\Factory              $factory
@@ -285,6 +284,56 @@ class Project
         $this->files = $files;
 
         return $this;
+    }
+
+    /**
+     * get name value
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * get path value
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * get config value
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * get branches value
+     *
+     * @return array
+     */
+    public function getBranches()
+    {
+        return $this->branches;
+    }
+
+    /**
+     * get versions value
+     *
+     * @return array
+     */
+    public function getVersions()
+    {
+        return $this->versions;
     }
 
 
