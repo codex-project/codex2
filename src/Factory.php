@@ -59,7 +59,7 @@ class Factory
      */
     public function __construct(Filesystem $files, Repository $config, Cache $cache)
     {
-        $this->rootDir = base_path('resources/docs');
+        $this->rootDir = config('codex.root_dir');
         $this->files   = $files;
         $this->config  = $config->get('codex');
         $this->cache   = $cache;
