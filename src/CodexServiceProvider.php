@@ -44,8 +44,7 @@ class CodexServiceProvider extends ServiceProvider
         $this->app->singleton('codex', 'Codex\Codex\Factory');
 
         $this->registerFilters();
-        $this->registerGithub();
-        $this->registerFilesystems();
+
     }
 
     protected function registerFilters()
@@ -54,13 +53,5 @@ class CodexServiceProvider extends ServiceProvider
         $this->addCodexHook('document:render', ParsedownFilter::class);
     }
 
-    protected function registerGithub()
-    {
-        $this->app->register(GithubHookServiceProvider::class);
-    }
 
-    protected function registerFilesystems()
-    {
-        $this->app->register(FilesystemsHookServiceProvider::class);
-    }
 }

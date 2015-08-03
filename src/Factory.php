@@ -6,8 +6,8 @@
  */
 namespace Codex\Codex;
 
-use Illuminate\Config\Repository;
-use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Traits\Macroable;
 use Symfony\Component\Finder\Finder;
@@ -24,6 +24,11 @@ class Factory
 {
     use Macroable;
 
+    /**
+     * Path to the directory containing all docs
+     *
+     * @var string
+     */
     protected $rootDir;
 
     /**
@@ -41,19 +46,25 @@ class Factory
      */
     protected $config;
 
-    /** Instantiates the class
-     *
-     * @param \Illuminate\Filesystem\Filesystem       $files
-     * @param \Illuminate\Config\Repository           $config
-     * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher
+    /**
+     * @var \Illuminate\Contracts\Cache\Repository
      */
-    public function __construct(Filesystem $files, Repository $config, Dispatcher $dispatcher)
+    protected $cache;
+
+
+    /**
+     * @param \Illuminate\Contracts\Filesystem\Filesystem $files
+     * @param \Illuminate\Contracts\Config\Repository     $config
+     * @param \Illuminate\Contracts\Cache\Repository      $cache
+     */
+    public function __construct(Filesystem $files, Repository $config, Cache $cache)
     {
         $this->rootDir = base_path('resources/docs');
         $this->files   = $files;
         $this->config  = $config->get('codex');
+        $this->cache   = $cache;
 
-        static::run('factory:ready', [ $this ]);
+        static::run('factory:ready', [ $this ]); // ready called after parameters have been set as class properties
 
 
         if ( ! isset($this->projects) )
@@ -61,6 +72,7 @@ class Factory
             $this->findAll();
         }
 
+        static::run('factory:done', [ $this ]); // ready called after parameters have been set as class properties
     }
 
     /**
@@ -68,7 +80,7 @@ class Factory
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function findAll()
+    public function findAll()
     {
         $finder = new Finder();
 
@@ -86,7 +98,7 @@ class Factory
     }
 
     /**
-     * make
+     * make a project object, will represent a project based on directory name
      *
      * @param $name
      * @return \Codex\Codex\Project
@@ -113,6 +125,41 @@ class Factory
     public function has($name)
     {
         return array_key_exists($name, $this->projects);
+    }
+
+    /**
+     * Generate an url to a project default page, project version default page, project default version document, project default version default document.
+     * Lots of options. Can leave any parameter nulled
+     *
+     * @param null $project
+     * @param null $ref
+     * @param null $doc
+     * @return string
+     */
+    public function url($project = null, $ref = null, $doc = null)
+    {
+        $uri = $this->config('base_route');
+        if ( ! is_null($project) )
+        {
+            if ( $project instanceof Project )
+            {
+                $uri .= '/' . $project->getName();
+            }
+            else
+            {
+                $uri .= '/' . $project;
+            }
+            if ( $ref )
+            {
+                $uri .= '/' . $ref;
+                if ( $doc )
+                {
+                    $uri .= '/' . $doc;
+                }
+            }
+        }
+
+        return url($uri);
     }
 
     /**
@@ -153,6 +200,16 @@ class Factory
     }
 
     /**
+     * get config value
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Set the codex config
      *
      * @param array $config
@@ -185,6 +242,31 @@ class Factory
         return $this;
     }
 
+    /**
+     * get cache value
+     *
+     * @return \Illuminate\Cache\CacheManager
+     */
+    public function getCache()
+    {
+        return $this->cache;
+    }
+
+    /**
+     * Set the cache value
+     *
+     * @param \Illuminate\Cache\CacheManager $cache
+     * @return Factory
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+
+        return $this;
+    }
+
+
+
 
 
     /**
@@ -208,13 +290,14 @@ class Factory
     /**
      * hook
      *
-     * @param string $point
+     * @param string          $point
      * @param string|\Closure $handler
      */
     public static function hook($point, $handler)
     {
 
-        if(! $handler instanceof \Closure && ! in_array(Hook::class, class_implements($handler), false)){
+        if ( ! $handler instanceof \Closure && ! in_array(Hook::class, class_implements($handler), false) )
+        {
             throw new \InvalidArgumentException("Failed adding hook. Provided handler for [{$point}] is not valid. Either provider a \\Closure or classpath that impelments \\Codex\\Codex\\Hook");
         }
         static::ensurePoint($point);

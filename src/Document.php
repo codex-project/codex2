@@ -64,6 +64,7 @@ class Document
 
         $this->attributes = $factory->config('default_document_attributes');
         $this->content    = $this->files->get($this->path);;
+        Factory::run('document:done', [ $this ]);
     }
 
     /**

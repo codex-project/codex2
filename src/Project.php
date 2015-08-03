@@ -101,13 +101,14 @@ class Project
         $this->path    = $path = Path::join($factory->getRootDir(), $name);
         Factory::run('project:ready', [$this]);
 
-        $directories    = $files->directories($this->path);
+        $directories    = $this->files->directories($this->path);
         $branches       = [ ];
         $this->refs     = [ ];
-        $this->versions = array_filter(array_map(function ($dirPath) use ($path, &$branches)
+        $this->versions = array_filter(array_map(function ($dirPath) use ($path, $name, &$branches)
         {
             $version      = Str::create(Str::ensureLeft($dirPath, '/'))->removeLeft($path)->removeLeft(DIRECTORY_SEPARATOR);
-            $this->refs[] = (string)$version;
+            $version      = (string)$version->removeLeft($name.'/');
+            $this->refs[] = $version;
             try
             {
                 return new version($version);
@@ -211,6 +212,13 @@ class Project
         $document = new Document($this->factory, $this, $this->files, $path);
         Factory::run('project:document', [$document]);
         return $document;
+    }
+
+
+    public function getMenu()
+    {
+        $path = Path::join($this->getPath(), $this->ref, 'menu.yml');
+        return new Menu($this, $this->files, $this->factory->getCache(), $path);
     }
 
     /**
@@ -348,6 +356,30 @@ class Project
 
         return $this;
     }
+
+    /**
+     * get factory value
+     *
+     * @return Factory
+     */
+    public function getFactory()
+    {
+        return $this->factory;
+    }
+
+    /**
+     * Set the factory value
+     *
+     * @param Factory $factory
+     * @return Project
+     */
+    public function setFactory($factory)
+    {
+        $this->factory = $factory;
+
+        return $this;
+    }
+
 
 
 
