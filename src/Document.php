@@ -56,9 +56,9 @@ class Document
      */
     public function __construct(Factory $factory, Project $project, Filesystem $files, $path)
     {
-        $this->project    = $project;
-        $this->files      = $files;
-        $this->path       = $path;
+        $this->project = $project;
+        $this->files   = $files;
+        $this->path    = $path;
         Factory::run('document:ready', [ $this ]);
 
 
@@ -76,8 +76,49 @@ class Document
     {
         Factory::run('document:render', [ $this ]);
 
+        $fsettings = $this->getProject()->config('filters_settings');
+        $filters   = array_only(static::$filters, $this->getProject()->config('filters'));
+        if ( count($filters) > 0 )
+        {
+            foreach ( $filters as $name => $filter )
+            {
+                if ( $filter instanceof \Closure )
+                {
+                    call_user_func_array($filter, [ $this, isset($fsettings[ $name ]) ? $fsettings[ $name ] : [ ] ]);
+                }
+                else
+                {
+                    $instance = app()->make($filter);
+                    call_user_func_array([ $instance, 'handle' ], [ $this, isset($fsettings[ $name ]) ? $fsettings[ $name ] : [ ] ]);
+                }
+            }
+        }
+
         return $this->content;
     }
+
+    /**
+     * All added filters
+     * @var array
+     */
+    protected static $filters = [ ];
+
+    /**
+     * add filter
+     *
+     * @param $name
+     * @param $handler
+     */
+    public static function filter($name, $handler)
+    {
+
+        if ( ! $handler instanceof \Closure && ! in_array(Filter::class, class_implements($handler), false) )
+        {
+            throw new \InvalidArgumentException("Failed adding Filter. Provided handler for [{$name}] is not valid. Either provider a \\Closure or classpath that impelments \\Codex\\Codex\\Filter");
+        }
+        static::$filters[ $name ] = $handler;
+    }
+
 
     /**
      * attr
@@ -192,7 +233,6 @@ class Document
 
         return $this;
     }
-
 
 
 }

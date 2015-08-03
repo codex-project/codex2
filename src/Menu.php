@@ -11,7 +11,8 @@ use Caffeinated\Beverage\Str;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Traits\Macroable;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -24,6 +25,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Menu implements Jsonable, Arrayable
 {
+    use Macroable;
 
     /**
      * @var \Codex\Codex\Project

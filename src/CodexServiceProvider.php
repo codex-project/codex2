@@ -10,8 +10,6 @@ namespace Codex\Codex;
 use Caffeinated\Beverage\ServiceProvider;
 use Codex\Codex\Filters\FrontMatterFilter;
 use Codex\Codex\Filters\ParsedownFilter;
-use Codex\Codex\Hooks\Github\GithubHookServiceProvider;
-use Codex\Codex\Hooks\Filesystems\FilesystemsHookServiceProvider;
 use Codex\Codex\Traits\CodexHookProvider;
 
 /**
@@ -44,13 +42,12 @@ class CodexServiceProvider extends ServiceProvider
         $this->app->singleton('codex', 'Codex\Codex\Factory');
 
         $this->registerFilters();
-
     }
 
     protected function registerFilters()
     {
-        $this->addCodexHook('document:render', FrontMatterFilter::class);
-        $this->addCodexHook('document:render', ParsedownFilter::class);
+        $this->addCodexFilter('front_matter', FrontMatterFilter::class);
+        $this->addCodexFilter('parsedown', ParsedownFilter::class);
     }
 
 

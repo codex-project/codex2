@@ -16,4 +16,5 @@ namespace Codex\Codex;
  */
 interface Filter
 {
+    public function handle(Document $document, array $config);
 }

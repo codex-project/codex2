@@ -2,10 +2,10 @@
 namespace Codex\Codex\Filters;
 
 use Codex\Codex\Document;
-use Codex\Codex\Hook;
+use Codex\Codex\Filter;
 use Parsedown;
 
-class ParsedownFilter implements Hook
+class ParsedownFilter implements Filter
 {
     protected $parsedown;
 
@@ -21,7 +21,7 @@ class ParsedownFilter implements Hook
      * @return array
      * @internal param \ParsedownExtra $parsedown
      */
-    public function handle(Document $document)
+    public function handle(Document $document, array $config)
     {
         $document->setContent($this->parsedown->text($document->getContent()));
     }

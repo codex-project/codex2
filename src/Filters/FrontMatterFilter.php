@@ -2,10 +2,10 @@
 namespace Codex\Codex\Filters;
 
 use Codex\Codex\Document;
-use Codex\Codex\Hook;
+use Codex\Codex\Filter;
 use Symfony\Component\Yaml\Yaml;
 
-class FrontMatterFilter implements Hook
+class FrontMatterFilter implements Filter
 {
     /**
      * Handle the filter.
@@ -13,7 +13,7 @@ class FrontMatterFilter implements Hook
      * @param \Codex\Codex\Document $document
      * @return array
      */
-    public function handle(Document $document)
+    public function handle(Document $document, array $config)
     {
         $content = $document->getContent();
 
@@ -23,9 +23,6 @@ class FrontMatterFilter implements Hook
             $content = preg_replace($pattern, '', $content); // not really required when using html doc tags. But in case it's frontmatter, it should be removed
             $attributes = array_merge_recursive($document->getAttributes(), Yaml::parse($matches[1]));
             $document->setAttributes($attributes);
-
-           # $content[ 'frontmatter' ] = Yaml::parse($matches[ 2 ]);
-           # $content[ 'body' ]        = $matches[ 4 ];
         }
 
         $document->setContent($content);
