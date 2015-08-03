@@ -59,9 +59,11 @@ class Document
         $this->project    = $project;
         $this->files      = $files;
         $this->path       = $path;
-        $this->attributes = $factory->config('default_document_attributes');
-        $this->content    = $this->files->get($this->path);
         Factory::run('document:ready', [ $this ]);
+
+
+        $this->attributes = $factory->config('default_document_attributes');
+        $this->content    = $this->files->get($this->path);;
     }
 
     /**
@@ -176,6 +178,20 @@ class Document
 
         return $this;
     }
+
+    /**
+     * Set the path value
+     *
+     * @param mixed $path
+     * @return Document
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
 
 
 }

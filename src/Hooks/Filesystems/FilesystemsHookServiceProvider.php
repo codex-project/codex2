@@ -7,7 +7,10 @@
 namespace Codex\Codex\Hooks\Filesystems;
 
 use Codex\Codex\Traits\CodexHookProvider;
+use Dropbox\Client;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Dropbox\DropboxAdapter;
+use League\Flysystem\Filesystem;
 
 /**
  * This is the StorageHookServiceProvider.
@@ -21,6 +24,16 @@ class FilesystemsHookServiceProvider extends ServiceProvider
 {
     use CodexHookProvider;
 
+    public function boot()
+    {
+        \Storage::extend('dropbox', function($app, $config){
+            $client = new Client(env('DROPBOX_ACCESS_TOKEN'), env('DROPBOX_EMAIL'));
+            $adapter = new DropboxAdapter($client);
+            $adapter->setPathPrefix($config['folder']);
+            $adapter->applyPathPrefix($config['folder']);
+            return new Filesystem($adapter);
+        });
+    }
     /**
      * Register the service provider.
      *
@@ -35,5 +48,8 @@ class FilesystemsHookServiceProvider extends ServiceProvider
         // if filesystems are properly configured, it will replace its `files` instance with the
         // adapter specified in the project
         $this->addCodexHook('project:ready', FilesystemsProjectHook::class);
+
+        // The document hook needs to fix the path if we use something else then a local disk
+        $this->addCodexHook('document:ready', FilesystemsDocumentHook::class);
     }
 }

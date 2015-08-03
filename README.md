@@ -65,4 +65,26 @@ Hooks will allow to add, alter and remove all kinds of foreseeable features.
 I left out quite some things from all classes. But my idea is to make Factory a Macroable class. That way hooks can easily add addional methods to the factory class.
  The factory class is bound on `codex`. It manages all hooks as well.
  
-##### Project
+##### Usage
+
+Basically, using the the classes to get a markdown document goes something like
+```php
+app()->register(\Codex\Codex\CodexServiceProvider::class);
+$factory  = app('codex');                   // codex is a binding for factory
+$project  = $factory->make('themes');       // themes here is a project name
+$git      = $project->github();             // can use the github method, added by the hook utilizing the macroable trait
+$document = $project->getDocument('index'); //get a markdown document (no ext needed)
+$output   = $document->render();            // render it
+```
+
+Other stuff that can be done:
+```php
+app()->register(\Codex\Codex\CodexServiceProvider::class);
+$factory  = app('codex');                   // codex is a binding for factory
+$project  = $factory->make('themes');       // themes here is a project name
+$sortedVersionList = $project->getSortedRefs(); // Sorted version list, usefull for a dropdown 
+$project->setRef('1.2.0');                  // Select a different version
+$document = $project->getDocument('index'); // get a markdown document (for 1.2.0)
+$output   = $document->render();            // Render it
+$attribs  = $document->getAttributes();     // The frontmatter yaml stuff as php array 
+```

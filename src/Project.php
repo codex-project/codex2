@@ -99,6 +99,7 @@ class Project
         $this->name    = $name;
         $this->config  = $config;
         $this->path    = $path = Path::join($factory->getRootDir(), $name);
+        Factory::run('project:ready', [$this]);
 
         $directories    = $files->directories($this->path);
         $branches       = [ ];
@@ -149,7 +150,6 @@ class Project
         }
         $this->ref = $this->defaultRef = (string)$defaultRef;
 
-        Factory::run('project:ready', [$this]);
     }
 
     /**
@@ -334,6 +334,19 @@ class Project
     public function getVersions()
     {
         return $this->versions;
+    }
+
+    /**
+     * Set the path value
+     *
+     * @param string $path
+     * @return Project
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+
+        return $this;
     }
 
 

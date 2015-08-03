@@ -39,7 +39,7 @@ class FilesystemsProjectHook implements Hook
         }
         $disk     = $project->config('filesystems_disk');
         $settings = $project->config('filesystems_settings');
-        if ( ! isset($settins[ $disk ]) )
+        if ( ! isset($settings[ $disk ]) )
         {
             return;
         }
@@ -56,6 +56,9 @@ class FilesystemsProjectHook implements Hook
         elseif ( $disk === 'rackspace' )
         {
             $files = $this->fsm->createRackspaceDriver($fsconfig);
+        }
+        else {
+            $files = $this->fsm->disk($disk);
         }
 
         if ( isset($files) )
